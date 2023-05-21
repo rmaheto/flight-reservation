@@ -39,7 +39,7 @@ public class Customer {
     public String nationality;
 
     @NotNull
-    @Size(min=7, message="Passport should have atleast 2 characters")
+    @Size(min=7, message="Passport should have at least 2 characters")
     public String passportNumber;
     @NotNull
 
