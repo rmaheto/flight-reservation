@@ -14,11 +14,11 @@ import java.util.List;
 @RequestMapping("api/customers")
 public class CustomerController {
 
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer( @RequestBody Customer customer) {
-        Customer savedCustomer = customerService.createrCustomer (customer);
+        Customer savedCustomer = customerService.createCustomer (customer);
         return new ResponseEntity<> (savedCustomer, HttpStatus.CREATED);
     }
 

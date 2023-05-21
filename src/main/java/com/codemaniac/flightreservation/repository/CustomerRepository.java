@@ -8,5 +8,4 @@ import java.util.Map;
 
 @Repository
 public interface CustomerRepository extends JpaRepository <Customer, Long> {
-//    Map<Object, Object> findAllById(Long customerId);
 }

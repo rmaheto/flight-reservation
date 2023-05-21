@@ -6,7 +6,7 @@ import com.codemaniac.flightreservation.entity.Customer;
 import java.util.List;
 
 public interface CustomerService {
-    Customer createrCustomer( Customer customer);
+    Customer createCustomer( Customer customer);
     Customer getCustomerById(Long customerId);
 
     List<Customer> getAllCustomers();
