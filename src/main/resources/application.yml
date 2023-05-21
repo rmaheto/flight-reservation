@@ -4,6 +4,3 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-app:
-  keys:
-    path: keys/
