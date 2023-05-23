@@ -12,22 +12,28 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+
     @Override
-    public Customer createrCustomer(Customer customer) {
+    public Customer createCustomer(Customer customer) {
+
         return customerRepository.save (customer);
     }
+
     @Override
     public Customer getCustomerById(Long customerId) {
         Optional<Customer> optionalCustomer = customerRepository.findById (customerId);
-        return optionalCustomer.get ();
+
+        return optionalCustomer.get();
     }
+
     @Override
     public List<Customer> getAllCustomers() {
-        return customerRepository.findAll ();
+        return customerRepository.findAll();
     }
+
     @Override
     public Customer updateCustomer(Customer customer) {
-        Customer existingCustomer = customerRepository.findById (customer.getId ()).get ();
+        Customer existingCustomer = customerRepository.findById (customer.getId ()).get();
         existingCustomer.setDateOfBirth (customer.getDateOfBirth ());
         existingCustomer.setEmail (customer.getEmail ());
         existingCustomer.setNationality (customer.getNationality ());
@@ -40,6 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer updatedCustomer = customerRepository.save (existingCustomer);
         return updatedCustomer;
     }
+
     @Override
     public void deleteCustomer(Long customerId) {
         customerRepository.deleteById (customerId);
