@@ -17,7 +17,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer( @RequestBody Customer customer) {
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.createrCustomer (customer);
         return new ResponseEntity<> (savedCustomer, HttpStatus.CREATED);
     }
@@ -38,8 +38,8 @@ public class CustomerController {
     @PutMapping("{id}")
 
     public ResponseEntity<Customer> updatedCustomer(@PathVariable("id") Long id,
-                                                  @RequestBody Customer customer) {
-        customer.setId  (id);
+                                                    @RequestBody Customer customer) {
+        customer.setId (id);
         Customer updatedCustomer = customerService.updateCustomer (customer);
         return new ResponseEntity<> (updatedCustomer, HttpStatus.OK);
 
