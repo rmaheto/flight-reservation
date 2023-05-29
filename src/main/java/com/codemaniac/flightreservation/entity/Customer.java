@@ -8,7 +8,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,28 +22,31 @@ public class Customer {
     private Long Id;
 
     @Column(nullable = false)
-    public String firstName;
+    private  String firstName;
     @Column(nullable = false)
 
-    public String otherName;
+    private String otherName;
     @Column(nullable = false)
 
-    public String lastName;
+    private String lastName;
     @Column(nullable=false,unique=true)
 
-    public String email;
+    private String email;
     @Size (min=10, message="phone number  should have 10 digital")
-    public Long phoneNumber;
+    private String phoneNumber;
     @NotNull
-    Date dateOfBirth;
+    private LocalDate dateOfBirth;
     @NotNull
-    public String nationality;
+    private String nationality;
 
     @NotNull
     @Size(min=7, message="Passport should have at least 2 characters")
-    public String passportNumber;
+    private String passportNumber;
     @NotNull
+    private String frequentFlyerNumber;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-    public String frequentFlyerNumber;
 
 }
