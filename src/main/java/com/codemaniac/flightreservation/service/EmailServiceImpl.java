@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @Slf4j
@@ -17,12 +16,11 @@ public class EmailServiceImpl implements EmailService {
     @Value("${sms.url}")
     private String smsUrl;
 
-    private WebClient webClient;
+
 
     private RestTemplate restTemplate;
 
-    public EmailServiceImpl(WebClient webClient, RestTemplate restTemplate) {
-        this.webClient = webClient;
+    public EmailServiceImpl( RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
