@@ -1,0 +1,75 @@
+openapi: 3.0.1
+info:
+  title: Messaging Service API
+  description: "This Messaging Service enables efficient dispatch of SMS and email\
+    \ messages for notifications, alerts, and more. Please note, it's designed exclusively\
+    \ for sending, not receiving messages"
+  contact:
+    name: Raymond Aheto
+    url: http://www.codemaniacgh.com
+    email: support@codemaniacgh.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.0"
+servers:
+- url: http://localhost:8090/api/v1
+  description: Local server
+paths:
+  /sms/send:
+    post:
+      tags:
+      - sms-controller
+      operationId: sendSms
+      parameters:
+      - name: Calling-Application
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /email/send:
+    post:
+      tags:
+      - email-controller
+      operationId: sendMessage
+      parameters:
+      - name: Calling-Application
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    MessageDTO:
+      type: object
+      properties:
+        receivers:
+          type: array
+          items:
+            type: string
+        subject:
+          type: string
+        body:
+          type: string

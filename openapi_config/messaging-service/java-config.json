@@ -1,0 +1,12 @@
+{
+  "modelPackage": "",
+  "apiPackage": "",
+  "interfaceOnly": true,
+  "reactive": false,
+  "useBeanValidation": true,
+  "implicitHeaders": true,
+  "useOptional": true,
+  "library": "spring-boot",
+  "useTags": true,
+  "serializableModel": true
+}
