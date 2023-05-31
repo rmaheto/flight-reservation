@@ -1,19 +1,15 @@
 package com.codemaniac.flightreservation.service;
 
-import com.codemaniac.flightreservation.exception.EmailSendException;
-import com.codemaniac.flightreservation.exception.SmsSendException;
+import lombok.extern.slf4j.Slf4j;
 import org.openapitools.model.MessageDTO;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service
+@Slf4j
 public class EmailServiceImpl implements EmailService {
     @Value("${email.url}")
     private String emailUrl;
@@ -21,31 +17,54 @@ public class EmailServiceImpl implements EmailService {
     @Value("${sms.url}")
     private String smsUrl;
 
-    private final WebClient webClient;
+    private WebClient webClient;
 
-    public EmailServiceImpl(WebClient webClient) {
+    private RestTemplate restTemplate;
+
+    public EmailServiceImpl(WebClient webClient, RestTemplate restTemplate) {
         this.webClient = webClient;
+        this.restTemplate = restTemplate;
     }
 
     @Override
-    public Mono<Void> sendEmail(MessageDTO messageDTO) {
-        return webClient.post ()
-                .uri(emailUrl)
-                .header ("Calling-Application","customer-service")
-                .bodyValue (messageDTO)
-                .retrieve ()
-                .bodyToMono (Void.class)
-                .onErrorMap (throwable -> new EmailSendException("Failed to send Email",throwable));
+    public void sendEmail(MessageDTO messageDTO) {
+        ResponseEntity<Void> responseEntity = restTemplate.exchange(
+                emailUrl,
+                HttpMethod.POST,
+                createRequestEntity(messageDTO,createHeaders()),
+                Void.class
+        );
+        int statusCode = responseEntity.getStatusCode().value();
+        log.warn("Status Code: " + statusCode);
     }
 
     @Override
-    public Mono<String> sendSms(MessageDTO messageDTO) {
-        return webClient.post ()
-                .uri(smsUrl)
-                .header ("Calling-Application","customer-service")
-                .bodyValue (messageDTO)
-                .retrieve ()
-                .bodyToMono (String.class)
-                .onErrorMap (throwable -> new SmsSendException ("Failed to send sms",throwable));
+    public String sendSms(MessageDTO messageDTO) {
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                smsUrl,
+                HttpMethod.POST,
+                createRequestEntity(messageDTO,createHeaders()),
+                String.class
+        );
+        // Get the response body and status code
+        String responseBody = responseEntity.getBody();
+        int statusCode = responseEntity.getStatusCode().value();
+
+        // Handle the response
+        log.warn("Response Body: " + responseBody);
+        log.warn("Status Code: " + statusCode);
+        return responseBody;
+    }
+
+
+    private HttpHeaders createHeaders(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Calling-Application","customer-service");
+        return headers;
+    }
+
+    private HttpEntity<MessageDTO> createRequestEntity(MessageDTO messageDTO, HttpHeaders headers){
+        return new HttpEntity<>(messageDTO, headers);
     }
 }

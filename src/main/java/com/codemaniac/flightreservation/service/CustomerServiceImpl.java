@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.openapitools.model.MessageDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +67,14 @@ public class CustomerServiceImpl implements CustomerService{
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
             Address updatedAddress = customer.getAddress();
             existingCustomer.setAddress(updatedAddress);
-            return customerRepository.save(existingCustomer);
+            Customer updatedCustomer =  customerRepository.save(customer);
+            MessageDTO messageDTO = new MessageDTO ();
+            messageDTO.setReceivers (Arrays.asList (updatedCustomer.getPhoneNumber()));
+            String messageBody = String.format ("Dear %s %s, your customer details has been updated",updatedCustomer.getFirstName (),
+                    updatedCustomer.getLastName ());
+            messageDTO.setBody (messageBody);
+            emailService.sendSms(messageDTO);
+            return updatedCustomer;
         } else {
             // Throw an exception or handle the case when the customer does not exist
             throw new CustomerNotFoundException("Customer not found for ID: " + customer.getId());
