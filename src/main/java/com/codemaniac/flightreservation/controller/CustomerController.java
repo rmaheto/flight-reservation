@@ -2,10 +2,13 @@ package com.codemaniac.flightreservation.controller;
 
 import com.codemaniac.flightreservation.entity.Customer;
 import com.codemaniac.flightreservation.service.CustomerService;
+import com.codemaniac.flightreservation.service.EmailService;
 import lombok.AllArgsConstructor;
+import org.openapitools.model.MessageDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -15,6 +18,7 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final EmailService emailService;
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer( @RequestBody Customer customer) {
