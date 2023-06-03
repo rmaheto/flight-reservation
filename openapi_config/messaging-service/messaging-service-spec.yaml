@@ -31,7 +31,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageDTO'
+              $ref: '#/components/schemas/MessageProperties'
         required: true
       responses:
         "200":
@@ -55,14 +55,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageDTO'
+              $ref: '#/components/schemas/MessageProperties'
         required: true
       responses:
         "200":
           description: OK
+  /support/index:
+    get:
+      tags:
+      - support-controller
+      operationId: index
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
 components:
   schemas:
-    MessageDTO:
+    MessageProperties:
       type: object
       properties:
         receivers:

@@ -1,11 +1,12 @@
 package com.codemaniac.flightreservation.service;
+
 import com.codemaniac.flightreservation.entity.Address;
 import com.codemaniac.flightreservation.entity.Customer;
 import com.codemaniac.flightreservation.exception.CustomerNotFoundException;
 import com.codemaniac.flightreservation.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.openapitools.model.MessageDTO;
+import org.openapitools.model.MessageProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -16,19 +17,19 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
     private final CustomerRepository customerRepository;
-    private final EmailService emailService;
+    private final MessagingService emailService;
 
     @Override
     public Customer createCustomer(Customer customer){
 
         Customer savedCustomer =  customerRepository.save(customer);
-        MessageDTO messageDTO = new MessageDTO ();
-        messageDTO.setReceivers (Arrays.asList (customer.getEmail ()));
-        messageDTO.setSubject ("Welcome To Delta Airlines");
+        MessageProperties messageProperties = new MessageProperties ();
+        messageProperties.setReceivers (Arrays.asList (customer.getEmail ()));
+        messageProperties.setSubject ("Welcome To Delta Airlines");
         String messageBody = String.format ("Thank you %s %s for Flying with Delta Airlines",customer.getFirstName (),
                 customer.getLastName ());
-        messageDTO.setBody (messageBody);
-        emailService.sendEmail (messageDTO);
+        messageProperties.setBody (messageBody);
+        emailService.sendEmail (messageProperties);
         return savedCustomer;
     }
 
@@ -68,12 +69,12 @@ public class CustomerServiceImpl implements CustomerService{
             Address updatedAddress = customer.getAddress();
             existingCustomer.setAddress(updatedAddress);
             Customer updatedCustomer =  customerRepository.save(customer);
-            MessageDTO messageDTO = new MessageDTO ();
-            messageDTO.setReceivers (Arrays.asList (updatedCustomer.getPhoneNumber()));
+            MessageProperties messageProperties = new MessageProperties ();
+            messageProperties.setReceivers (Arrays.asList (updatedCustomer.getPhoneNumber()));
             String messageBody = String.format ("Dear %s %s, your customer details has been updated",updatedCustomer.getFirstName (),
                     updatedCustomer.getLastName ());
-            messageDTO.setBody (messageBody);
-            emailService.sendSms(messageDTO);
+            messageProperties.setBody (messageBody);
+            emailService.sendSms(messageProperties);
             return updatedCustomer;
         } else {
             // Throw an exception or handle the case when the customer does not exist
