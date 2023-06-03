@@ -5,8 +5,10 @@ import com.codemaniac.flightreservation.exception.CustomerNotFoundException;
 import com.codemaniac.flightreservation.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.openapitools.model.MessageDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +16,20 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
     private final CustomerRepository customerRepository;
+    private final EmailService emailService;
 
     @Override
     public Customer createCustomer(Customer customer){
 
-        return customerRepository.save(customer);
+        Customer savedCustomer =  customerRepository.save(customer);
+        MessageDTO messageDTO = new MessageDTO ();
+        messageDTO.setReceivers (Arrays.asList (customer.getEmail ()));
+        messageDTO.setSubject ("Welcome To Delta Airlines");
+        String messageBody = String.format ("Thank you %s %s for Flying with Delta Airlines",customer.getFirstName (),
+                customer.getLastName ());
+        messageDTO.setBody (messageBody);
+        emailService.sendEmail (messageDTO);
+        return savedCustomer;
     }
 
     @Override
@@ -56,7 +67,14 @@ public class CustomerServiceImpl implements CustomerService{
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
             Address updatedAddress = customer.getAddress();
             existingCustomer.setAddress(updatedAddress);
-            return customerRepository.save(existingCustomer);
+            Customer updatedCustomer =  customerRepository.save(customer);
+            MessageDTO messageDTO = new MessageDTO ();
+            messageDTO.setReceivers (Arrays.asList (updatedCustomer.getPhoneNumber()));
+            String messageBody = String.format ("Dear %s %s, your customer details has been updated",updatedCustomer.getFirstName (),
+                    updatedCustomer.getLastName ());
+            messageDTO.setBody (messageBody);
+            emailService.sendSms(messageDTO);
+            return updatedCustomer;
         } else {
             // Throw an exception or handle the case when the customer does not exist
             throw new CustomerNotFoundException("Customer not found for ID: " + customer.getId());
